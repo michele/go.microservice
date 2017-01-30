@@ -8,3 +8,6 @@ install:
     - glide install
 script:
     - go test -v $(glide nv)
+matrix:
+  allow_failures:
+    - go: tip
