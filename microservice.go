@@ -1,6 +1,7 @@
 package microservice
 
 import (
+	"flag"
 	"strconv"
 
 	"net/http"
@@ -28,10 +29,13 @@ func init() {
 	timeout = time.Duration(seconds) * time.Second
 
 	client = &http.Client{
-		Transport: &http.Transport{
-			MaxIdleConns: 20,
-		},
 		Timeout: timeout,
+	}
+
+	if v := flag.Lookup("test.v"); v == nil || v.Value.String() != "true" {
+		client.Transport = &http.Transport{
+			MaxIdleConns: 20,
+		}
 	}
 }
 
