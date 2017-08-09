@@ -32,7 +32,7 @@ func init() {
 		Timeout: timeout,
 	}
 
-	if v := flag.Lookup("test.v"); v == nil || v.Value.String() != "true" {
+	if flag.Lookup("test.v") == nil {
 		client.Transport = &http.Transport{
 			MaxIdleConns: 20,
 		}
