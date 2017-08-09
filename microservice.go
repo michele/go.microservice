@@ -14,8 +14,25 @@ var DefaultDomain string
 var DefaultPort = "3000"
 var DefaultTimeout = 10
 
+var client *http.Client
+
 func init() {
 	DefaultDomain = os.Getenv("GO_ENV")
+	var timeout time.Duration
+	var seconds int
+	var parsErr error
+	seconds, parsErr = strconv.Atoi(os.Getenv("MS_DEFAULT_TIMEOUT"))
+	if parsErr != nil {
+		seconds = DefaultTimeout
+	}
+	timeout = time.Duration(seconds) * time.Second
+
+	client = &http.Client{
+		Transport: &http.Transport{
+			MaxIdleConns: 20,
+		},
+		Timeout: timeout,
+	}
 }
 
 func Call(ms string, args Args) (*http.Response, error) {
@@ -24,18 +41,6 @@ func Call(ms string, args Args) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		var timeout time.Duration
-		var seconds int
-		var parsErr error
-		seconds, parsErr = strconv.Atoi(os.Getenv("MS_DEFAULT_TIMEOUT"))
-		if parsErr != nil {
-			seconds = DefaultTimeout
-		}
-		timeout = time.Duration(seconds) * time.Second
-
-		client := &http.Client{
-			Timeout: timeout,
-		}
 		resp, err := client.Do(req)
 		return resp, err
 	}
