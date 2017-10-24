@@ -1,6 +1,8 @@
 package microservice_test
 
 import (
+	"io/ioutil"
+
 	"github.com/michele/go.microservice"
 
 	"net/url"
@@ -41,4 +43,9 @@ func TestPrepare(t *testing.T) {
 	for k, v := range args.Headers {
 		assert.Equal(t, v, req.Header.Get(k))
 	}
+
+	bts, err := ioutil.ReadAll(req.Body)
+
+	assert.Nil(t, err)
+	assert.Equal(t, string(bts), args.Body)
 }

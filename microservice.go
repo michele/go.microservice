@@ -1,7 +1,9 @@
 package microservice
 
 import (
+	"bytes"
 	"flag"
+	"io"
 	"strconv"
 
 	"net/http"
@@ -73,8 +75,13 @@ func Prepare(ms string, args Args) (*http.Request, error) {
 	} else {
 		method = "GET"
 	}
-	req, err := http.NewRequest(method, uurl, nil)
+	var bodyReq io.Reader
 
+	if len(args.Body) > 0 {
+		bodyReq = bytes.NewBuffer([]byte(args.Body))
+	}
+
+	req, err := http.NewRequest(method, uurl, bodyReq)
 	if err != nil {
 		return nil, err
 	} else {
